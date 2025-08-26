@@ -1,80 +1,239 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Voter Registration</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    form {
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      width: 400px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 12px;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    .error {
+      color: red;
+      font-size: 12px;
+      display: block;
+      margin-top: 4px;
+    }
+    .gender-options {
+      display: flex;
+      gap: 15px;
+      margin-top: 5px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      background: #4CAF50;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    input.invalid {
+      border: 1px solid red;
+    }
+
+  </style>
+</head>
+<body>
+  <form id="registrationForm">
+    <h2>Voter Registration</h2>
+
+    <label>Full Name</label>
+    <input type="text" id="fullname" required>
+    <a class="error" id="fullnameError"></a>
+
+    <label>Email</label>
+    <input type="email" id="email" required>
+    <a class="error" id="emailError"></a>
+
+    <label>Phone Number</label>
+    <input type="text" id="phone" required>
+    <a class="error" id="phoneError"></a>
+
+    <label>ZIP / PIN Code</label>
+    <input type="text" id="zipcode" required>
+    <a class="error" id="zipError"></a>
+
+    <label>Date of Birth</label>
+    <input type="text" id="dob" placeholder="DD-MM-YYYY or YYYY-MM-DD" required>
+    <a class="error" id="dobError"></a>
+
+    <label>Password</label>
+    <input type="password" id="password" required>
+    <a class="error" id="passwordError"></a>
+
+    <label>Confirm Password</label>
+    <input type="password" id="confirmPassword" required>
+    <a class="error" id="confirmPasswordError"></a>
+
+    <label>Gender</label>
+    <div class="gender-options">
+      <input type="radio" name="gender" value="Male"> Male
+      <input type="radio" name="gender" value="Female"> Female
+      <input type="radio" name="gender" value="Other"> Other
+    </div>
+    <a class="error" id="genderError"></a>
+
+    <label>
+      <input type="checkbox" id="terms"> I agree to Terms & Conditions
+    </label>
+    <a class="error" id="termsError"></a>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
     document.getElementById("registrationForm").addEventListener("submit", function(event) {
       let valid = true;
 
-      // Clear previous errors
-      document.querySelectorAll(".error").forEach(e => e.textContent = "");
-
-      // Full Name validation
-      const fullname = document.getElementById("fullname").value.trim();
-      if (!/^[A-Za-z ]{4,}$/.test(fullname)) {
-        document.getElementById("fullnameError").textContent = "Name must be at least 4 letters, alphabets only.";
+      const fullname = document.getElementById("fullname");
+      const fullnameRegex = /^[A-Za-z ]{4,}$/;
+      if (!fullnameRegex.test(fullname.value)) {
+        document.getElementById("fullnameError").textContent = "Full name must be at least 4 letters, only alphabets and spaces.";
+        fullname.classList.add("invalid");
         valid = false;
-      }
-
-
-      // Phone validation
-      const phone = document.getElementById("phone").value.trim();
-      if (!/^(\+91[-]?)?[6-9][0-9]{9}$/.test(phone)) {
-        document.getElementById("phoneError").textContent = "Enter valid phone (9876543210 or +91-9876543210)";
-        valid = false;
-      }
-
-      // ZIP validation
-      const zip = document.getElementById("zipcode").value.trim();
-      if (!/^[0-9]{6}$/.test(zip)) {
-        document.getElementById("zipError").textContent = "PIN Code must be exactly 6 digits.";
-        valid = false;
-      }
-
-      const dob = document.getElementById("dob").value.trim();
-      let dobDate;
-      if (/^\d{2}-\d{2}-\d{4}$/.test(dob)) {
-        const [d, m, y] = dob.split("-");
-        dobDate = new Date(`${y}-${m}-${d}`);
-      } else if (/^\d{4}-\d{2}-\d{2}$/.test(dob)) {
-        dobDate = new Date(dob);
       } else {
-        document.getElementById("dobError").textContent = "Date format must be DD-MM-YYYY or YYYY-MM-DD.";
-        valid = false;
+        document.getElementById("fullnameError").textContent = "";
+        fullname.classList.remove("invalid");
+        fullname.classList.add("valid");
       }
-      if (dobDate) {
-        const today = new Date();
-        const age = today.getFullYear() - dobDate.getFullYear();
-        const m = today.getMonth() - dobDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < dobDate.getDate())) {
+
+   
+      const phone = document.getElementById("phone");
+      const phoneRegex = /^(\+91[- ]?)?[6-9]\d{9}$/;
+      if (!phoneRegex.test(phone.value)) {
+        document.getElementById("phoneError").textContent = "Enter valid phone number (9876543210 or +91-9876543210).";
+        phone.classList.add("invalid");
+        valid = false;
+      } else {
+        document.getElementById("phoneError").textContent = "";
+        phone.classList.remove("invalid");
+        phone.classList.add("valid");
+      }
+
+      const zipcode = document.getElementById("zipcode");
+      const zipRegex = /^\d{6}$/;
+      if (!zipRegex.test(zipcode.value)) {
+        document.getElementById("zipError").textContent = "ZIP code must be exactly 6 digits.";
+        zipcode.classList.add("invalid");
+        valid = false;
+      } else {
+        document.getElementById("zipError").textContent = "";
+        zipcode.classList.remove("invalid");
+        zipcode.classList.add("valid");
+      }
+
+      const dob = document.getElementById("dob");
+      const dobRegex = /^(\d{2}-\d{2}-\d{4}|\d{4}-\d{2}-\d{2})$/;
+      if (!dobRegex.test(dob.value)) {
+        document.getElementById("dobError").textContent = "Date must be DD-MM-YYYY or YYYY-MM-DD.";
+        dob.classList.add("invalid");
+        valid = false;
+      } else {
+        let parts = dob.value.includes("-") ? dob.value.split("-") : [];
+        let birthDate;
+        if (dob.value.match(/^\d{2}-\d{2}-\d{4}$/)) {
+          let [d, m, y] = dob.value.split("-");
+          birthDate = new Date(`${y}-${m}-${d}`);
+        } else {
+          birthDate = new Date(dob.value);
+        }
+        let age = new Date().getFullYear() - birthDate.getFullYear();
+        let m = new Date().getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && new Date().getDate() < birthDate.getDate())) {
           age--;
         }
-        if (age < 18) {
+        if (isNaN(age) || age < 18) {
           document.getElementById("dobError").textContent = "You must be at least 18 years old.";
+          dob.classList.add("invalid");
           valid = false;
+        } else {
+          document.getElementById("dobError").textContent = "";
+          dob.classList.remove("invalid");
+          dob.classList.add("valid");
         }
       }
 
-      const password = document.getElementById("password").value;
-      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password)) {
-        document.getElementById("passwordError").textContent = "Password must have 8+ chars, 1 uppercase, 1 lowercase, 1 digit, 1 special char.";
+      const password = document.getElementById("password");
+      const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!passRegex.test(password.value)) {
+        document.getElementById("passwordError").textContent = "Password must be 8+ chars, include upper, lower, digit & special.";
+        password.classList.add("invalid");
         valid = false;
+      } else {
+        document.getElementById("passwordError").textContent = "";
+        password.classList.remove("invalid");
+        password.classList.add("valid");
       }
 
-      const confirmPassword = document.getElementById("confirmPassword").value;
-      if (confirmPassword !== password) {
+      const confirmPassword = document.getElementById("confirmPassword");
+      if (confirmPassword.value !== password.value || confirmPassword.value === "") {
         document.getElementById("confirmPasswordError").textContent = "Passwords do not match.";
+        confirmPassword.classList.add("invalid");
         valid = false;
+      } else {
+        document.getElementById("confirmPasswordError").textContent = "";
+        confirmPassword.classList.remove("invalid");
+        confirmPassword.classList.add("valid");
       }
 
       const gender = document.querySelector('input[name="gender"]:checked');
       if (!gender) {
-        document.getElementById("genderError").textContent = "Please select a gender.";
+        document.getElementById("genderError").textContent = "Please select your gender.";
         valid = false;
+      } else {
+        document.getElementById("genderError").textContent = "";
       }
 
-      const terms = document.getElementById("terms").checked;
-      if (!terms) {
-        document.getElementById("termsError").textContent = "You must accept the terms.";
+      const terms = document.getElementById("terms");
+      if (!terms.checked) {
+        document.getElementById("termsError").textContent = "You must agree to the Terms & Conditions.";
         valid = false;
+      } else {
+        document.getElementById("termsError").textContent = "";
       }
 
-      if (!valid) event.preventDefault();
+      if (!valid) {
+        event.preventDefault();
+      }
     });
   </script>
+</body>
+</html>
