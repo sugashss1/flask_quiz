@@ -1,0 +1,80 @@
+<script>
+    document.getElementById("registrationForm").addEventListener("submit", function(event) {
+      let valid = true;
+
+      // Clear previous errors
+      document.querySelectorAll(".error").forEach(e => e.textContent = "");
+
+      // Full Name validation
+      const fullname = document.getElementById("fullname").value.trim();
+      if (!/^[A-Za-z ]{4,}$/.test(fullname)) {
+        document.getElementById("fullnameError").textContent = "Name must be at least 4 letters, alphabets only.";
+        valid = false;
+      }
+
+
+      // Phone validation
+      const phone = document.getElementById("phone").value.trim();
+      if (!/^(\+91[-]?)?[6-9][0-9]{9}$/.test(phone)) {
+        document.getElementById("phoneError").textContent = "Enter valid phone (9876543210 or +91-9876543210)";
+        valid = false;
+      }
+
+      // ZIP validation
+      const zip = document.getElementById("zipcode").value.trim();
+      if (!/^[0-9]{6}$/.test(zip)) {
+        document.getElementById("zipError").textContent = "PIN Code must be exactly 6 digits.";
+        valid = false;
+      }
+
+      const dob = document.getElementById("dob").value.trim();
+      let dobDate;
+      if (/^\d{2}-\d{2}-\d{4}$/.test(dob)) {
+        const [d, m, y] = dob.split("-");
+        dobDate = new Date(`${y}-${m}-${d}`);
+      } else if (/^\d{4}-\d{2}-\d{2}$/.test(dob)) {
+        dobDate = new Date(dob);
+      } else {
+        document.getElementById("dobError").textContent = "Date format must be DD-MM-YYYY or YYYY-MM-DD.";
+        valid = false;
+      }
+      if (dobDate) {
+        const today = new Date();
+        const age = today.getFullYear() - dobDate.getFullYear();
+        const m = today.getMonth() - dobDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < dobDate.getDate())) {
+          age--;
+        }
+        if (age < 18) {
+          document.getElementById("dobError").textContent = "You must be at least 18 years old.";
+          valid = false;
+        }
+      }
+
+      const password = document.getElementById("password").value;
+      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password)) {
+        document.getElementById("passwordError").textContent = "Password must have 8+ chars, 1 uppercase, 1 lowercase, 1 digit, 1 special char.";
+        valid = false;
+      }
+
+      const confirmPassword = document.getElementById("confirmPassword").value;
+      if (confirmPassword !== password) {
+        document.getElementById("confirmPasswordError").textContent = "Passwords do not match.";
+        valid = false;
+      }
+
+      const gender = document.querySelector('input[name="gender"]:checked');
+      if (!gender) {
+        document.getElementById("genderError").textContent = "Please select a gender.";
+        valid = false;
+      }
+
+      const terms = document.getElementById("terms").checked;
+      if (!terms) {
+        document.getElementById("termsError").textContent = "You must accept the terms.";
+        valid = false;
+      }
+
+      if (!valid) event.preventDefault();
+    });
+  </script>
